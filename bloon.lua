@@ -52,12 +52,14 @@ function Bloon:checkMouseCollision()
         and self.y + self.size >= love.mouse.getY()
 end
 
-SuperBloon = Bloon:new()
+SuperBloon = setmetatable({}, { __index = Bloon })
 SuperBloon.__index = SuperBloon
 
+
 function SuperBloon:new()
-    self.dy = 100
-    setmetatable(o, self)
+    local o = Bloon.new(self)
+    o.dy = 100
+    setmetatable(o, SuperBloon)
     return o
 end
 

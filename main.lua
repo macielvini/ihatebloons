@@ -7,6 +7,7 @@ function love.load()
 
     require "gun"
     require "bloon"
+    local stages = require "stage"
 
     assets = {
         cursor = love.image.newImageData("assets/aim.png"),
@@ -30,20 +31,25 @@ function love.load()
         timeBetweenSpawn=1,
         timeForNextSpawn=0,
         lastSpawnCoord=0,
-        score=0
+        score=0,
+        stage=1
     }
-    
+
+    ---@return Stage
+    function getCurrentStage()
+        return stages[states.stage]
+    end
+
     ---@type Bloon[]
     states.bloons = {} 
     
     local cursor = love.mouse.newCursor(assets.cursor, assets.cursor:getWidth()/2, assets.cursor:getHeight()/2)
     love.mouse.setCursor(cursor)
-
-
 end
 
 function love.update(dt)
-    spawnBloons(dt)
+    local stage = getCurrentStage()
+    stage:update(dt)
     for i=#states.bloons, 1, -1 do
         local b = states.bloons[i]
         b:update(dt)
@@ -56,15 +62,20 @@ function love.update(dt)
     Gun:update(dt)
 end
 
-function love.draw()
-    drawBg()
-
-    drawBloons()
-    Gun:draw()
-
-    local font = love.graphics.newFont(18)
+local function hud()
+    local currFont = love.graphics.getFont()
+    local font = love.graphics.newFont(16)
     love.graphics.setFont(font)
-    love.graphics.print("Bloons popped " .. states.score, 10, 10)
+    love.graphics.print("Score " .. states.score, 10, 10)
+    love.graphics.print("Level  " .. 1, 10, 30)
+    love.graphics.setFont(currFont)
+end
+
+function love.draw()
+    local stage = getCurrentStage()
+    stage:draw()
+    Gun:draw()
+    hud()
 end
 
 function love.mousepressed(x, y, button, isTouch, presses)
@@ -84,15 +95,4 @@ end
 
 function love.keypressed(key)
     if key == 'escape' then love.event.quit() end
-end
-
-function drawBg()
-    love.graphics.setBackgroundColor(0.133, 0.616, 0.949)
-    for i=1, #assets.bg do
-        local bg = assets.bg[i]
-        local scaleX = love.graphics.getWidth() / bg:getWidth()
-        local scaleY = love.graphics.getHeight() / bg:getHeight()
-        local x, y = 0, H-bg:getHeight()*scaleY
-        love.graphics.draw(bg, x, y, 0, scaleX, scaleY)
-    end
 end
