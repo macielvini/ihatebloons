@@ -33,7 +33,7 @@ function Bloon:draw()
     local scale = self.size * 2 / assets.bloons[1]:getWidth()
     love.graphics.draw(assets.bloons[1], self.x-self.size, self.y-self.size, 0, scale, scale)
     
-    if debug then
+    if DEBUG then
         love.graphics.setColor(1, 1, 1)
         love.graphics.circle("line", self.x, self.y, self.size, self.size)
     end

@@ -1,13 +1,8 @@
 W, H = 800, 600
-
-utils = {}
-
-debug = false
+DEBUG = true
 
 function love.load()
-    love.window.setMode(W, H, { borderless=not debug })
     love.graphics.setDefaultFilter('nearest', 'nearest')
-    love.window.setTitle('I HATE BLOONS')
     love.audio.setVolume(0.5)
 
     require "gun"
@@ -37,6 +32,7 @@ function love.load()
         lastSpawnCoord=0,
         score=0
     }
+    
     ---@type Bloon[]
     states.bloons = {} 
     
