@@ -81,15 +81,8 @@ end
 function love.mousepressed(x, y, button, isTouch, presses)
     if button == 1 then
         if Gun:canFire() then
-            Gun.isTriggerPulled = true
             Gun:fire()
         end 
-    end
-end
-
-function love.mousereleased(x, y, button, isTouch, presses)
-    if button == 1 then
-        Gun.isTriggerPulled = false
     end
 end
 

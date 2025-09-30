@@ -81,7 +81,8 @@ end
 
 local baseBg = { 1, 2, 3, 4}
 local stages = {
-    Stage:new({1, 1, 1}, 1, baseBg),
+    Stage:new({1, 1, 1}, 3, baseBg),
+    Stage:new({2, 1, 2}, 3, baseBg),
 }
 
 return stages
