@@ -132,8 +132,9 @@ function love.draw()
         love.graphics.setFont(nf)
         love.graphics.setColor(1, 1, 0)
         love.graphics.printf("Game Over", 0, H/2, W, "center")
-        love.graphics.setColor(1, 1, 1)
         love.graphics.setFont(f)
+        love.graphics.printf("Press 'r' to restart", 0, H/2 + 50, W, "center")
+        love.graphics.setColor(1, 1, 1)
         return
     end
 
