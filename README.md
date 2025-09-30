@@ -7,3 +7,10 @@
 - world object life cycle
 - delaying actions
 - game level progression
+
+
+### Images
+
+![Gameplay](./examples/gamestart.png)
+![Playing](./examples/playing.png)
+![Game over](./examples/gameover.png)
