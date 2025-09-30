@@ -9,11 +9,12 @@ Bloon = {
 
 Bloon.__index = Bloon
 
-function Bloon:new()
+---@param dy? number
+function Bloon:new(dy)
     local o = {
         x = love.math.random(50, W-50),
-        y = H + 10,
-        dy = 50,
+        y = H + 50 + self.size,
+        dy = dy or 50,
         size = 50,
         isDead = false
     }
@@ -21,11 +22,12 @@ function Bloon:new()
     return o
 end
 
-function Bloon:update(dt)
+function Bloon:update(dt, i)
     self.y = self.y - self.dy * dt
 
     if self.y + self.size <= 0 then
         self.isDead = true
+        table.remove(states.bloons, i)
     end
 end
 
@@ -56,9 +58,10 @@ SuperBloon = setmetatable({}, { __index = Bloon })
 SuperBloon.__index = SuperBloon
 
 
-function SuperBloon:new()
+---@param dy? number
+function SuperBloon:new(dy)
     local o = Bloon.new(self)
-    o.dy = 100
+    o.dy = dy or 100
     setmetatable(o, SuperBloon)
     return o
 end

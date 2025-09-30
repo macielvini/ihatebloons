@@ -18,16 +18,17 @@ end
 
 ---@class Stage
 local Stage = {
-    bloons={}, rate=1, timer=0, nextBloon=1, backgrounds={}, next=1
+    bloons={}, rate=1, timer=0, nextBloon=0, backgrounds={}, startDelay=0
+
 }
 Stage.__index = Stage
 
 ---@param bloons number[] bloon types 
 ---@param rate number spawn rate
----@param bgs number[] bg indexes from assets.bg
-function Stage:new(bloons, rate, bgs)
+---@param bgs? number[] bg indexes from assets.bg
+function Stage:new(bloons, rate, bgs, delay)
     local o = {
-        bloons=bloons, rate=rate, timer=0, nextBloon=1, next=1, backgrounds=bgs or {1,2,3,4}
+        bloons=bloons, rate=rate, timer=0, nextBloon=0, backgrounds=bgs or {1,2,3,4}, startDelay=delay or 3
     }
     setmetatable(o, self)
     return o
@@ -52,23 +53,35 @@ function Stage:draw()
         b:draw()
     end
 
+    -- draw stage timer
+    if not self:started() then
+        local f = love.graphics.getFont()
+        local nf = love.graphics.newFont(32)
+        love.graphics.setFont(nf)
+        love.graphics.setColor(1, 0, 0)
+        love.graphics.printf("Next stage starts in " .. math.ceil(self.startDelay), 0, H/2, W, "center")
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.setFont(f)
+    end
 end
 
 function Stage:update(dt)
-    if self.next == 0 then return end -- game ends
+    if self.nextBloon == 0 then
+        self:start(dt)
+        return
+    end
     
-    if self.nextBloon > #self.bloons then
-        -- go to next level
+    if self:isOver() then
+        return
     end
 
-    if self.nextBloon <= #self.bloons then
-        self:spawn(dt)
-    end
+    self:spawn(dt)
 end
 
 function Stage:spawn(dt)
-    if self.timer <= 0 then
+    if self.timer <= 0 and self.nextBloon > 0 and self.nextBloon <= #self.bloons then
         local bloon = createBloon(self.bloons[self.nextBloon])
+        bloon.dy = bloon.dy + (math.floor(states.timer) * 2)
         table.insert(states.bloons, bloon)
         
         -- update states
@@ -79,11 +92,21 @@ function Stage:spawn(dt)
     self.timer = self.timer - dt
 end
 
-local baseBg = { 1, 2, 3, 4}
-local stages = {
-    Stage:new({1, 1, 1}, 3, baseBg),
-    Stage:new({2, 1, 2}, 3, baseBg),
-}
+function Stage:isOver()
+    return self.nextBloon > #self.bloons
+end
 
-return stages
+function Stage:start(dt)
+    if not self:started() then
+        self.startDelay = self.startDelay - dt
+        return
+    end
+    self.nextBloon = 1
+end
+
+function Stage:started()
+    return self.startDelay <= 0
+end
+
+return Stage
 
